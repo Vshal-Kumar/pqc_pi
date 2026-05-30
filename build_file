@@ -1,0 +1,83 @@
+Here are all 4 liboqs build commands:
+
+## x86-64 — WITH AVX2 (SIMD)
+```bash
+rm -rf liboqs/build_x86_64_simd
+cmake -S liboqs -B liboqs/build_x86_64_simd -GNinja \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DOQS_BUILD_ONLY_LIB=ON \
+      -DOQS_DIST_BUILD=OFF \
+      -DOQS_ENABLE_KEM_ml_kem_768=ON \
+      -DOQS_ENABLE_SIG_ml_dsa_65=ON \
+      -DOQS_USE_AVX2_INSTRUCTIONS=ON \
+      -DOQS_USE_BMI2_INSTRUCTIONS=ON \
+      -DOQS_USE_POPCNT_INSTRUCTIONS=ON \
+      -DCMAKE_C_FLAGS="-march=native -O3" \
+      -DBUILD_SHARED_LIBS=OFF
+cmake --build liboqs/build_x86_64_simd -j$(nproc)
+```
+
+---
+
+## x86-64 — WITHOUT SIMD
+```bash
+rm -rf liboqs/build_x86_64_nosimd
+cmake -S liboqs -B liboqs/build_x86_64_nosimd -GNinja \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DOQS_BUILD_ONLY_LIB=ON \
+      -DOQS_DIST_BUILD=ON \
+      -DOQS_ENABLE_KEM_ml_kem_768=ON \
+      -DOQS_ENABLE_SIG_ml_dsa_65=ON \
+      -DOQS_USE_AVX2_INSTRUCTIONS=OFF \
+      -DOQS_USE_BMI2_INSTRUCTIONS=OFF \
+      -DOQS_USE_POPCNT_INSTRUCTIONS=OFF \
+      -DCMAKE_C_FLAGS="-O3" \
+      -DBUILD_SHARED_LIBS=OFF
+cmake --build liboqs/build_x86_64_nosimd -j$(nproc)
+```
+
+---
+
+## ARM (Pi) — WITH NEON (SIMD)
+```bash
+rm -rf liboqs/build_aarch64_simd
+cmake -S liboqs -B liboqs/build_aarch64_simd -GNinja \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DOQS_BUILD_ONLY_LIB=ON \
+      -DOQS_DIST_BUILD=OFF \
+      -DOQS_ENABLE_KEM_ml_kem_768=ON \
+      -DOQS_ENABLE_SIG_ml_dsa_65=ON \
+      -DOQS_USE_ARM_NEON_INSTRUCTIONS=ON \
+      -DCMAKE_C_FLAGS="-march=native -O3" \
+      -DBUILD_SHARED_LIBS=OFF
+cmake --build liboqs/build_aarch64_simd -j$(nproc)
+```
+
+---
+
+## ARM (Pi) — WITHOUT SIMD
+```bash
+rm -rf liboqs/build_aarch64_nosimd
+cmake -S liboqs -B liboqs/build_aarch64_nosimd -GNinja \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DOQS_BUILD_ONLY_LIB=ON \
+      -DOQS_DIST_BUILD=ON \
+      -DOQS_ENABLE_KEM_ml_kem_768=ON \
+      -DOQS_ENABLE_SIG_ml_dsa_65=ON \
+      -DOQS_USE_ARM_NEON_INSTRUCTIONS=OFF \
+      -DCMAKE_C_FLAGS="-O3" \
+      -DBUILD_SHARED_LIBS=OFF
+cmake --build liboqs/build_aarch64_nosimd -j$(nproc)
+```
+
+---
+
+**Key flag differences at a glance:**
+
+| Flag | SIMD | No SIMD |
+|---|---|---|
+| `OQS_DIST_BUILD` | `OFF` | `ON` |
+| `OQS_USE_AVX2_INSTRUCTIONS` / `OQS_USE_ARM_NEON_INSTRUCTIONS` | `ON` | `OFF` |
+| `CMAKE_C_FLAGS` | `-march=native -O3` | `-O3` only |
+
+Run `rm -rf` on the build folder first every time — otherwise CMake throws the stale cache error you saw earlier.

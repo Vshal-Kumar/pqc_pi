@@ -1,0 +1,5 @@
+echo "=== SIMD build ==="
+objdump -d liboqs/build_x86_64_simd/lib/liboqs.a | grep -c "fmla\|fmul\|ld1\|st1"
+
+echo "=== no-SIMD build ==="
+objdump -d liboqs/build_x86_64_nosimd/lib/liboqs.a | grep -c "fmla\|fmul\|ld1\|st1"
